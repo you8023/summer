@@ -1,20 +1,25 @@
 'use strict';
-
+function $ (obj) {
+    return document.querySelector(obj);
+}
+function $$ (father, obj) {
+    return father.querySelectorAll(obj);
+}
 
 // 菜单切换
 // 
-var menu = document.getElementById('menu'),
+var menu = $('#menu'),
     isIndex = true,
 
 
-    indexWeb = document.getElementById('index'),
-    menuWeb = document.getElementById('menuweb'),
+    indexWeb = $('#index'),
+    menuWeb = $('#menuweb'),
 
-    banner = document.querySelector('#header'),
-    bannerA = banner.querySelectorAll('div'),
-    bannerP = banner.querySelectorAll('p'),
-    icon = document.querySelectorAll('i'),
-    all = document.querySelector('#all');
+    banner = $('#header'),
+    bannerA = $$(banner, 'div'),
+    bannerP = $$(banner, 'p'),
+    icon = $$(document, 'i'),
+    all = $('#all');
 
 menu.addEventListener('touchstart' || 'click', changeWeb);
 
@@ -52,21 +57,21 @@ function changeWeb () {
 
 
 function createXHR() {
-  if (window.XMLHttpRequest) {  //IE7+、Firefox、Opera、Chrome 和Safari
-     return new XMLHttpRequest();
-  } else if (window.ActiveXObject) {   //IE6 及以下
-    var versions = ['MSXML2.XMLHttp','Microsoft.XMLHTTP'];
-    for (var i = 0,len = versions.length; i<len; i++) {
-      try {
-        return new ActiveXObject(version[i]);
-        break;
-      } catch (e) {
-        //跳过
-      } 
+    if (window.XMLHttpRequest) {  //IE7+、Firefox、Opera、Chrome 和Safari
+        return new XMLHttpRequest();
+    } else if (window.ActiveXObject) {   //IE6 及以下
+        var versions = ['MSXML2.XMLHttp','Microsoft.XMLHTTP'];
+        for (var i = 0,len = versions.length; i<len; i++) {
+            try {
+                return new ActiveXObject(version[i]);
+                break;
+            } catch (e) {
+            //跳过
+            } 
+        }
+    } else {
+        throw new Error('浏览器不支持XHR对象！');
     }
-  } else {
-    throw new Error('浏览器不支持XHR对象！');
-  }
 }
 
 
@@ -103,7 +108,8 @@ function ajax(obj) {
         callback();
     }
     function callback() {
-        if (xhr.status == 200) {  //判断http的交互是否成功，200表示成功
+        if (xhr.status == 200) {  
+        //判断http的交互是否成功，200表示成功
             obj.success(xhr.responseText);            //回调传递参数
         } else {
             alert('获取数据错误！错误代号：' + xhr.status + '，错误信息：' + xhr.statusText);
@@ -115,25 +121,23 @@ function params(data) {
     var arr = [];
     for (var i in data) {
     //特殊字符传参产生的问题可以使用encodeURIComponent()进行编码处理
-      arr.push(encodeURIComponent(i) + '=' + encodeURIComponent(data[i]));
+        arr.push(encodeURIComponent(i) + '=' + encodeURIComponent(data[i]));
     }
     return arr.join('&');
 }
 
 // 轮播
 // 
-var ppt = document.querySelector('#ppt'),
-    button = document.querySelector('#button'),
+var ppt = $('#ppt'),
+    button = $('#button'),
     timer = null,
     index = 0;
 ajax({
     url: "/sliders",
     method: 'GET',
     success: function(res) {
-        // console.log(res);
         var data = JSON.parse(res);
-        // console.log(res);
-
+        // 传入图像和对应的title
         for (var i = 0; i < data.length; i++) {
             ppt.innerHTML += '<a href="' + data[i].link + '"><div><img src="' + data[i].imgURL + '"><p>' + data[i].title + '</p></div></a>';
             
@@ -183,14 +187,14 @@ ajax({
                 // 切换到下一张图片
                 ppt.style.left = (parseInt(left) - 100) + '%';
                 index ++;
-              }
-              else if (index == len - 1) {
+            }
+            else if (index == len - 1) {
                 ppt.style.left = '0%';
                 index = 0;
-              }
-              for (var i = 0; i < btn.length; i++)
+            }
+            for (var i = 0; i < btn.length; i++)
                     btn[i].className = 'btn';
-                btn[index].className = 'current';
+            btn[index].className = 'current';
         }
 
     },
@@ -205,73 +209,72 @@ ajax({
     url: '/tags',
     method: 'GET',
     success: function(res) {
-        // console.log(res);
         var data = JSON.parse(res);
-        // console.log(res);
-        var added = document.querySelectorAll('.choose'),
-        addMore = document.querySelectorAll('.choose-more'),
+        var added = $$(document, '.choose'),
+        addMore = $$(document, '.choose-more'),
     
-        add = document.querySelector('#add'),
-        chooseBtn = add.querySelectorAll('button'),
-        changeDiv = document.getElementById('changeDiv');
+        add = $('#add'),
+        chooseBtn = $$(add, 'button'),
+        changeDiv = $('#changeDiv');
         var indexChosen = added.length - 1;
-        // 开始加已添加的
+        // 初始化已添加的
         for (var i = 0; i < data.added.length; i++) {
-            var added = document.querySelectorAll('.choose');
+            var added = $$(document, '.choose');
             if (indexChosen == -1) {
                 var changeDiv = document.getElementById('changeDiv');
                 changeDiv.innerHTML += '<div class="choose"><button>' + data.added[i].name + '</button></div>';
                 indexChosen ++;
             } else if (added[indexChosen] != undefined) {
-                var addedBtn = added[indexChosen].querySelectorAll('button');
+                var addedBtn = $$(added[indexChosen], 'button');
                 if (addedBtn.length == 4) {
-                    var changeDiv = document.getElementById('changeDiv');
-                    
-
+                    // 判断该行div内有多少个button，若有四个，则另起一行
+                    var changeDiv = $('#changeDiv');
                     changeDiv.innerHTML += '<hr><div class="choose"><button>' + data.added[i].name + '</button></div>';
                     indexChosen ++;
                 } else {
+                    // 否则直接在该div内加一个button
                     added[indexChosen].innerHTML += '<button>' + data.added[i].name + '</button>';
                 }
             }   
         }
-        // 后来加可添加的
+        // 初始化可添加的
         var indexChoose = addMore.length - 1;
         for (var i = 0; i < data.avaliable.length; i++) {
-            var addMore = document.querySelectorAll('.choose-more');
+            var addMore = $$(document, '.choose-more');
             if (indexChoose == -1) {
-
                 var add = document.getElementById('add');
                 add.innerHTML += '<div class="choose-more"><button>' + data.avaliable[i].name + '</button></div>';
                 indexChoose ++;
             } else if (addMore[indexChoose] != undefined) {
                 var chooseBtn = addMore[indexChoose].querySelectorAll('button');
                 if (chooseBtn.length == 4) {
+                    // 判断该行div内有多少个button，若有四个，则另起一行
                     var add = document.getElementById('add');
                     add.innerHTML += '<div class="choose-more"><button>' + data.avaliable[i].name + '</button></div>';
                     indexChoose ++;
                 } else {
+                    // 否则直接在该div内加一个button
                     addMore[indexChoose].innerHTML += '<button>' + data.avaliable[i].name + '</button>';
                 }
             }
         }
 
-        // 添加类目
-        var added = document.querySelectorAll('.choose'),
-            
-            add = document.querySelector('#add'),
-            chooseBtn = add.querySelectorAll('button'),
-            changeDiv = document.getElementById('changeDiv');
+        // 添加栏目
+        var added = $$(document, '.choose'),
+            add = $('#add'),
+            chooseBtn = $$(add, 'button'),
+            changeDiv = $('#changeDiv');
             
         var indexChooseIt = added.length - 1;
         for (var i = 0; i < chooseBtn.length; i++) {
             chooseBtn[i].addEventListener('touchstart', function () {
 
-                var added = document.querySelectorAll('.choose'),
-                    changeDiv = document.getElementById('changeDiv'),
-                    chosenBtn = changeDiv.querySelectorAll('button');
+                var added = $$(document, '.choose'),
+                    changeDiv = $('#changeDiv'),
+                    chosenBtn = $$(changeDiv, 'button');
 
-                var addedBtn = added[indexChooseIt].querySelectorAll('button');
+                var addedBtn = $$(added[indexChooseIt], 'button');
+                // 依次与已有栏目一一核对，若有重名的，则弹窗提醒
                 for (var j = 0; j < chosenBtn.length; j++) {
                     if (chosenBtn[j].innerHTML == this.innerHTML) {
                         alert('你已选择该栏目');
@@ -279,7 +282,7 @@ ajax({
                     } 
                 }
                 if (addedBtn.length == 4) {
-                    var changeDiv = document.getElementById('changeDiv');
+                    var changeDiv = $('#changeDiv');
                     changeDiv.innerHTML += '<hr><div class="choose"><button>' + this.innerHTML + '</button></div>';
                     indexChooseIt ++;
                 } else {
@@ -288,87 +291,73 @@ ajax({
                 
             });
         }
-
-        
     },
     async : true
 });
 
+function newsSync () {
+    // 新闻同步
+    var news = $$(document, '.news-div'),
+        image = $$(document, '.image'),
+        content = $$(document, '.content'),
+        contentA = $$(document, '.contentA'),
+        title = $$(document, '.title'),
+        decration = $$(document, '.decration'),
+        number = $$(document, '.number'),
+        sort = $$(document, '.sort'),
+        focus = $('.bannerFocus');
 
-// 新闻同步
-var news = document.querySelectorAll('.news-div'),
-    image = document.querySelectorAll('.image'),
-    content = document.querySelectorAll('.content'),
-    contentA = document.querySelectorAll('.contentA'),
-    title = document.querySelectorAll('.title'),
-    decration = document.querySelectorAll('.decration'),
-    number = document.querySelectorAll('.number'),
-    sort = document.querySelectorAll('.sort'),
-    focus = document.querySelector('.bannerFocus');
+    ajax({
+        url: "/news?num=4",
+        method: "GET",
+        success: function(res) {
+            var data = JSON.parse(res);
+            // 初始化新闻图片
+            for (var i = 0; i < data.length; i++) {
+                image[i].innerHTML = '<img src="' + data[i].imgURL + '">';
+                contentA[i].href = data[i].link;
+                focus.innerHTML = data[0].title;
+                // 字符过长解决方案
+                function longToShort (obj, len) {
+                    if (obj.innerHTML.replace(/[\u4e00-\u9fa5_a-z_A-Z_0-9]/g,"a").length > len) {
+                        var str = obj.innerHTML;
+                        var reg = /[\u4e00-\u9fa5_a-z_A-Z_0-9]/g;
+                        var arr = str.match(reg).slice(0,len);
+                        title = $$(document, '.title');
+                        
+                        obj.innerHTML = arr;
+                        obj.innerHTML = obj.innerHTML.replace(/,/g, '') + '...';
+                    }
+                }
+                longToShort(focus, 12);
+                // 如果没有type图标，则该div不显示
+                if (data[0].type == null) {
+                    sort[0].style.display = 'none';
+                } else {
+                    sort[0].innerHTML = data[0].type;
+                    sort[0].style.backgroundColor = data[0].typeColor;
+                }
+                if (data[i].type == null) {
+                    sort[i + 1].style.display = 'none';
+                }
 
+                title[i].innerHTML = data[i].title;
+                longToShort(title[i], 12);
 
-ajax({
-    url: "/news?num=4",
-    method: "GET",
-    success: function(res) {
-        var data = JSON.parse(res);
-        for (var i = 0; i < data.length; i++) {
-            image[i].innerHTML = '<img src="' + data[i].imgURL + '">';
-            contentA[i].href = data[i].link;
-            focus.innerHTML = data[0].title;
-            // 字符过长解决方案
-            if (focus.innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 16) {
-                var str = focus.innerHTML;
-                var reg = /[\u0391-\uFFE5]/g;
-                var arr = str.match(reg).slice(0,16);
-                title = document.querySelectorAll('.title');
-                
-                focus.innerHTML = arr;
-                focus.innerHTML = focus.innerHTML.replace(/,/g, '') + '...';
+                decration[i].innerHTML = data[i].description;
+                longToShort(decration[i], 30)
 
+                // 初始化跟帖数
+                number[i].innerHTML = data[i].post + '跟帖';
+                sort[i + 1].innerHTML = data[i].type;
+                sort[i + 1].style.backgroundColor = data[i].typeColor;
             }
-            if (data[0].type == null) {
-                sort[0].style.display = 'none';
-            } else {
-                sort[0].innerHTML = data[0].type;
-                sort[0].style.backgroundColor = data[0].typeColor;
-            }
-            
-            if (data[i].type == null) {
-                sort[i + 1].style.display = 'none';
-            }
+        },
+        async : true
+    });
+}
 
-            title[i].innerHTML = data[i].title;
-
-            if (title[i].innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 12) {
-
-                var str = title[i].innerHTML;
-                var reg = /[\u0391-\uFFE5]/g;
-                var arr = str.match(reg).slice(0,12);
-                title = document.querySelectorAll('.title');
-                
-                title[i].innerHTML = arr;
-                title[i].innerHTML = title[i].innerHTML.replace(/,/g, '') + '...';
-            }
-
-            decration[i].innerHTML = data[i].description;
-            if (decration[i].innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 30) {
-                var str = decration[i].innerHTML;
-                var reg = /[\u0391-\uFFE5]/g;
-                var arr = str.match(reg).slice(0,10);
-
-                decration = document.querySelectorAll('.decration');
-                
-                decration[i].innerHTML = arr;
-                decration[i].innerHTML = decration[i].innerHTML.replace(/,/g, '') + '...';
-            }
-            number[i].innerHTML = data[i].post + '跟帖';
-            sort[i + 1].innerHTML = data[i].type;
-            sort[i + 1].style.backgroundColor = data[i].typeColor;
-        }
-    },
-    async : true
-});
+newsSync();
 
 indexWeb.addEventListener('touchstart', startFresh);
 indexWeb.addEventListener('touchmove', fresh);
@@ -384,83 +373,7 @@ function fresh(e) {
         e.preventDefault();  
         var n = e.touches[0].pageY - y;
         if (n > 100) {
-            // 新闻同步
-            var news = document.querySelectorAll('.news-div'),
-                image = document.querySelectorAll('.image'),
-                content = document.querySelectorAll('.content'),
-                contentA = document.querySelectorAll('.contentA'),
-                title = document.querySelectorAll('.title'),
-                decration = document.querySelectorAll('.decration'),
-                number = document.querySelectorAll('.number'),
-                sort = document.querySelectorAll('.sort'),
-                focus = document.querySelector('.bannerFocus');
-
-            ajax({
-                url: "/news?num=4",
-                method: "GET",
-                success: function(res) {
-                    // console.log(res);
-                    var data = JSON.parse(res);
-                    // console.log(res);
-                    for (var i = 0; i < data.length; i++) {
-                        image[i].innerHTML = '<img src="' + data[i].imgURL + '">';
-                        contentA[i].href = data[i].link;
-                        focus.innerHTML = data[0].title;
-                        // 字符过长解决方案
-                        if (focus.innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 16) {
-                            var str = focus.innerHTML;
-                            var reg = /[\u0391-\uFFE5]/g;
-                            var arr = str.match(reg).slice(0,16);
-                            title = document.querySelectorAll('.title');
-                            
-                            focus.innerHTML = arr;
-                            focus.innerHTML = focus.innerHTML.replace(/,/g, '') + '...';
-
-                        }
-                        if (data[0].type == null) {
-                            sort[0].style.display = 'none';
-                        } else {
-                            sort[0].innerHTML = data[0].type;
-                            sort[0].style.backgroundColor = data[0].typeColor;
-                        }
-                        
-                        if (data[i].type == null) {
-                            sort[i + 1].style.display = 'none';
-                        }
-
-                        title[i].innerHTML = data[i].title;
-
-                        if (title[i].innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 12) {
-
-                            var str = title[i].innerHTML;
-                            var reg = /[\u0391-\uFFE5]/g;
-                            var arr = str.match(reg).slice(0,12);
-                            console.log(arr);
-                            console.log('in');
-                            title = document.querySelectorAll('.title');
-                            
-                            title[i].innerHTML = arr;
-                            title[i].innerHTML = title[i].innerHTML.replace(/,/g, '') + '...';
-                        }
-
-                        decration[i].innerHTML = data[i].description;
-                        if (decration[i].innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 30) {
-                            var str = decration[i].innerHTML;
-                            var reg = /[\u0391-\uFFE5]/g;
-                            var arr = str.match(reg).slice(0,10);
-                            console.log(arr);
-                            decration = document.querySelectorAll('.decration');
-                            
-                            decration[i].innerHTML = arr;
-                            decration[i].innerHTML = decration[i].innerHTML.replace(/,/g, '') + '...';
-                        }
-                        number[i].innerHTML = data[i].post + '跟帖';
-                        sort[i + 1].innerHTML = data[i].type;
-                        sort[i + 1].style.backgroundColor = data[i].typeColor;
-                    }
-                },
-                async : true
-            });
+            newsSync();
         }
     }
     
@@ -468,7 +381,3 @@ function fresh(e) {
 function endFresh (e) {
     isMove = false;
 }
-
-
-
-
