@@ -12,12 +12,12 @@ var menu = document.getElementById('menu'),
 
     banner = document.querySelector('#header'),
     bannerA = banner.querySelectorAll('div'),
-    bannerP = banner.querySelectorAll('p');
+    bannerP = banner.querySelectorAll('p'),
+    icon = document.querySelectorAll('i');
 
 menu.addEventListener('touchstart' || 'click', changeWeb);
 
 function changeWeb () {
-    console.log('in');
     if (isIndex) {
         indexWeb.className = 'hide';
         menuWeb.className -= ' hide';
@@ -26,6 +26,8 @@ function changeWeb () {
         }
         bannerP[0].className -= ' hide';
         bannerP[1].className -= ' hide';
+        icon[0].className += ' hide';
+        icon[1].className = 'iconfont';
         isIndex = !isIndex;
     } else {
         indexWeb.className = '';
@@ -35,9 +37,12 @@ function changeWeb () {
         }
         bannerP[0].className += ' hide';
         bannerP[1].className += ' hide';
+        icon[1].className += ' hide';
+        icon[0].className = 'iconfont';
         isIndex = !isIndex;
     }
 }
+
 
 
 function createXHR() {
@@ -367,5 +372,68 @@ ajax({
     async : true
 });
 
+indexWeb.addEventListener('touchstart', startFresh);
+indexWeb.addEventListener('touchmove', fresh);
+indexWeb.addEventListener('touchend', endFresh);
+var isMove, y;
+function startFresh (e) {
+    isMove = true;
+    e.preventDefault();  
+    y = e.touches[0].pageY;
+}
+function fresh(e) {
+    if (isMove) {
+        e.preventDefault();  
+        var n = e.touches[0].pageY - y;
+        if (n > 100) {
+            // 新闻同步
+            var news = document.querySelectorAll('.news-div'),
+                image = document.querySelectorAll('.image'),
+                content = document.querySelectorAll('.content'),
+                contentA = document.querySelectorAll('.contentA'),
+                title = document.querySelectorAll('.title'),
+                decration = document.querySelectorAll('.decration'),
+                number = document.querySelectorAll('.number'),
+                sort = document.querySelectorAll('.sort'),
+                focus = document.querySelector('.bannerFocus');
 
 
+            ajax({
+                url: "/news?num=4",
+                method: "GET",
+                success: function(res) {
+                    // console.log(res);
+                    var data = JSON.parse(res);
+                    // console.log(res);
+                    for (var i = 0; i < data.length; i++) {
+                        image[i].innerHTML = '<img src="' + data[i].imgURL + '">';
+                        contentA[i].href = data[i].link;
+                        focus.innerHTML = data[0].title;
+                        if (data[0].type == null) {
+                            sort[0].style.display = 'none';
+                        } else {
+                            sort[0].innerHTML = data[0].type;
+                            sort[0].style.backgroundColor = data[0].typeColor;
+                        }
+                        
+                        if (data[i].type == null) {
+                            sort[i + 1].style.display = 'none';
+                        }
+                        
+
+                        title[i].innerHTML = data[i].title;
+                        decration[i].innerHTML = data[i].description;
+                        number[i].innerHTML = data[i].post + '跟帖';
+                        sort[i + 1].innerHTML = data[i].type;
+                        sort[i + 1].style.backgroundColor = data[i].typeColor;
+                    }
+                },
+                async : true
+            });
+        }
+    }
+    
+}
+function endFresh (e) {
+    isMove = false;
+}
