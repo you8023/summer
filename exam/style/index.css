@@ -290,6 +290,9 @@ hr {
   font-size: 0.40625rem;
   color: #5a5a5a;
 }
+.choose-more button:nth-child(n+2) {
+  margin-left: 0.1875rem;
+}
 .hide {
   display: none;
 }

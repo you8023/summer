@@ -39,25 +39,6 @@ function changeWeb () {
     }
 }
 
-// 添加类目
-var added = document.querySelectorAll('.choose'),
-    add = document.querySelector('#add'),
-    chooseBtn = add.querySelectorAll('button'),
-    changeDiv = document.getElementById('changeDiv');
-for (var i = 0; i < chooseBtn.length; i++) {
-    chooseBtn[i].addEventListener('click' || 'touchstart', adding(chooseBtn[i]));
-}
-
-function adding (obj) {
-    var indexChoose = added.length - 1;
-    console.log('indexchoose' + indexChoose);
-    var addedBtn = added[indexChoose].querySelectorAll('button');
-    if (addedBtn.length == 4) {
-        changeDiv.innerHTML += '<hr><div class="choose"><button>' + obj.innerHTML + '</button></div>';
-    } else {
-        added[indexChoose].innerHTML += '<button>' + obj.innerHTML + '</button>';
-    }
-}
 
 function createXHR() {
   if (window.XMLHttpRequest) {  //IE7+、Firefox、Opera、Chrome 和Safari
@@ -140,7 +121,7 @@ ajax({
     success: function(res) {
         // console.log(res);
         var data = JSON.parse(res);
-        console.log(res);
+        // console.log(res);
 
         for (var i = 0; i < data.length; i++) {
             ppt.innerHTML += '<a href="' + data[i].link + '"><div><img src="' + data[i].imgURL + '"><p>' + data[i].title + '</p></div></a>';
@@ -149,10 +130,8 @@ ajax({
         for (var i = 0; i < data.length - 1; i++) {
             button.innerHTML += '<div class="btn"></div>';
             var btnWidth = getClass(button, 'width');
-            console.log(parseInt(btnWidth));
-            button.style.width = (parseInt(btnWidth) / 64) + (20 / 64) + 'rem';
-            console.log(button.style.width);
-            
+            var intWidth = parseFloat(btnWidth) + 21;
+            button.style.width = intWidth + 'px';
         }
 
         //获取当前位置
@@ -208,6 +187,136 @@ ajax({
 });
 
 
+ajax({
+    url: '/tags',
+    method: 'GET',
+    success: function(res) {
+        // console.log(res);
+        var data = JSON.parse(res);
+        // console.log(res);
+        var added = document.querySelectorAll('.choose'),
+        addMore = document.querySelectorAll('.choose-more'),
+    
+        add = document.querySelector('#add'),
+        chooseBtn = add.querySelectorAll('button'),
+        changeDiv = document.getElementById('changeDiv');
+        var indexChosen = added.length - 1;
+        // 开始加已添加的
+        for (var i = 0; i < data.added.length; i++) {
+            var added = document.querySelectorAll('.choose');
+            if (indexChosen == -1) {
+                var changeDiv = document.getElementById('changeDiv');
+                changeDiv.innerHTML += '<div class="choose"><button>' + data.added[i].name + '</button></div>';
+                indexChosen ++;
+            } else if (added[indexChosen] != undefined) {
+                var addedBtn = added[indexChosen].querySelectorAll('button');
+                if (addedBtn.length == 4) {
+                    var changeDiv = document.getElementById('changeDiv');
+                    
+
+                    changeDiv.innerHTML += '<hr><div class="choose"><button>' + data.added[i].name + '</button></div>';
+                    indexChosen ++;
+                } else {
+                    added[indexChosen].innerHTML += '<button>' + data.added[i].name + '</button>';
+                }
+            }   
+        }
+        // 后来加可添加的
+        var indexChoose = addMore.length - 1;
+        for (var i = 0; i < data.avaliable.length; i++) {
+            var addMore = document.querySelectorAll('.choose-more');
+            if (indexChoose == -1) {
+
+                var add = document.getElementById('add');
+                add.innerHTML += '<div class="choose-more"><button>' + data.avaliable[i].name + '</button></div>';
+                indexChoose ++;
+            } else if (addMore[indexChoose] != undefined) {
+                var chooseBtn = addMore[indexChoose].querySelectorAll('button');
+                if (chooseBtn.length == 4) {
+                    var add = document.getElementById('add');
+                    add.innerHTML += '<div class="choose-more"><button>' + data.avaliable[i].name + '</button></div>';
+                    indexChoose ++;
+                } else {
+                    addMore[indexChoose].innerHTML += '<button>' + data.avaliable[i].name + '</button>';
+                }
+            }
+        }
+
+        // 添加类目
+        var added = document.querySelectorAll('.choose'),
+            
+            add = document.querySelector('#add'),
+            chooseBtn = add.querySelectorAll('button'),
+            changeDiv = document.getElementById('changeDiv');
+            
+        var indexChooseIt = added.length - 1;
+        for (var i = 0; i < chooseBtn.length; i++) {
+            chooseBtn[i].addEventListener('touchstart', function () {
+
+                var added = document.querySelectorAll('.choose'),
+                    changeDiv = document.getElementById('changeDiv'),
+                    chosenBtn = changeDiv.querySelectorAll('button');
+
+                var addedBtn = added[indexChooseIt].querySelectorAll('button');
+                for (var j = 0; j < chosenBtn.length; j++) {
+                    if (chosenBtn[j].innerHTML == this.innerHTML) {
+                        alert('你已选择该栏目');
+                        return;
+                    } 
+                }
+                if (addedBtn.length == 4) {
+                    var changeDiv = document.getElementById('changeDiv');
+                    changeDiv.innerHTML += '<hr><div class="choose"><button>' + this.innerHTML + '</button></div>';
+                    indexChooseIt ++;
+                } else {
+                    added[indexChooseIt].innerHTML += '<button>' + this.innerHTML + '</button>';
+                }
+                
+            });
+        }
+
+        
+    },
+    async : true
+});
+
+// // 添加类目
+// var added = document.querySelectorAll('.choose'),
+    
+//     add = document.querySelector('#add'),
+//     chooseBtn = add.querySelectorAll('button'),
+//     changeDiv = document.getElementById('changeDiv');
+    
+// var indexChooseIt = added.length - 1;
+// for (var i = 0; i < chooseBtn.length; i++) {
+//     console.log('infor');
+//     console.log(chooseBtn);
+//     chooseBtn[i].addEventListener('touchstart', function () {
+//         console.log('inevent');
+
+//         var added = document.querySelectorAll('.choose'),
+//             changeDiv = document.getElementById('changeDiv'),
+//             chosenBtn = changeDiv.querySelectorAll('button');
+
+//         var addedBtn = added[indexChooseIt].querySelectorAll('button');
+//         for (var j = 0; j < chosenBtn.length; j++) {
+//             if (chosenBtn[j].innerHTML == this.innerHTML) {
+//                 alert('你已选择该栏目');
+//                 return;
+//             } 
+//         }
+//         if (addedBtn.length == 4) {
+//             var changeDiv = document.getElementById('changeDiv');
+//             console.log(this);
+//             changeDiv.innerHTML += '<hr><div class="choose"><button>' + this.innerHTML + '</button></div>';
+//             indexChooseIt ++;
+//         } else {
+//             console.log('added');
+//             added[indexChooseIt].innerHTML += '<button>' + this.innerHTML + '</button>';
+//         }
+        
+//     });
+// }
 
 
 
@@ -231,7 +340,7 @@ ajax({
     success: function(res) {
         // console.log(res);
         var data = JSON.parse(res);
-        console.log(res);
+        // console.log(res);
         for (var i = 0; i < data.length; i++) {
             image[i].innerHTML = '<img src="' + data[i].imgURL + '">';
             contentA[i].href = data[i].link;
@@ -256,7 +365,7 @@ ajax({
         }
     },
     async : true
-})
+});
 
 
 
