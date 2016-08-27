@@ -33,11 +33,11 @@
   text-align: center;
   margin-left: 0.71875rem;
   border-bottom: 0.09375rem solid #be0201;
-  box-sizing: border-box;
+  box-sizing: content-box;
 }
 .other:nth-child(n+2) {
   border: 0;
-  margin-left: 0.84375rem;
+  margin-left: 0.71875rem;
 }
 #menu {
   height: 1.125rem;
@@ -166,6 +166,7 @@
 }
 .content h2 {
   float: left;
+  width: 6.796875rem;
   font-size: 0.46875rem;
   line-height: 0.703125rem;
   color: #000;
@@ -295,4 +296,15 @@ hr {
 }
 .hide {
   display: none;
+}
+#all {
+  width: 200%;
+  transition: all 0.5s ease-in 0s;
+  position: relative;
+}
+#index {
+  float: left;
+}
+#menuWeb {
+  float: right;
 }

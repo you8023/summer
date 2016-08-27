@@ -37,7 +37,7 @@
     text-align: center;
     margin-left: 46 / 64rem;
     border-bottom: 6 / 64rem solid #be0201;
-    box-sizing: border-box;
+    box-sizing: content-box;
 }
 .other:nth-child(n+2) {
     // .size (60 / 64rem, 68 / 64rem);
@@ -45,7 +45,7 @@
     // margin-top: 6 / 64rem;
     // float: left;
     border: 0;
-    margin-left: 54 / 64rem;
+    margin-left: 46 / 64rem;
 }
 #menu {
     .size (72 / 64rem, 68 / 64rem);
@@ -164,6 +164,7 @@
     .size (104 / 64rem, 435 / 64rem);
     h2 {
         float: left;
+        width: 435 / 64rem;
         font-size: 30 / 64rem;
         line-height: 45 / 64rem;
         color: #000;
@@ -312,4 +313,16 @@ hr {
 }
 .hide {
     display: none;
+}
+
+#all {
+    width: 200%;
+    transition: all .5s ease-in 0s;
+    position: relative;
+}
+#index {
+    float: left;
+}
+#menuWeb {
+    float: right;
 }

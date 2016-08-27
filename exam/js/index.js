@@ -13,12 +13,14 @@ var menu = document.getElementById('menu'),
     banner = document.querySelector('#header'),
     bannerA = banner.querySelectorAll('div'),
     bannerP = banner.querySelectorAll('p'),
-    icon = document.querySelectorAll('i');
+    icon = document.querySelectorAll('i'),
+    all = document.querySelector('#all');
 
 menu.addEventListener('touchstart' || 'click', changeWeb);
 
 function changeWeb () {
     if (isIndex) {
+        // all.style.left = '-50%';
         indexWeb.className = 'hide';
         menuWeb.className -= ' hide';
         for (var i = 0; i < bannerA.length - 1; i++) {
@@ -29,7 +31,10 @@ function changeWeb () {
         icon[0].className += ' hide';
         icon[1].className = 'iconfont';
         isIndex = !isIndex;
+        
+
     } else {
+        // all.style.left = 0;
         indexWeb.className = '';
         menuWeb.className = 'hide';
         for (var i = 0; i < bannerA.length - 1; i++) {
@@ -40,6 +45,7 @@ function changeWeb () {
         icon[1].className += ' hide';
         icon[0].className = 'iconfont';
         isIndex = !isIndex;
+        
     }
 }
 
@@ -192,6 +198,9 @@ ajax({
 });
 
 
+
+
+// 菜单栏
 ajax({
     url: '/tags',
     method: 'GET',
@@ -285,47 +294,6 @@ ajax({
     async : true
 });
 
-// // 添加类目
-// var added = document.querySelectorAll('.choose'),
-    
-//     add = document.querySelector('#add'),
-//     chooseBtn = add.querySelectorAll('button'),
-//     changeDiv = document.getElementById('changeDiv');
-    
-// var indexChooseIt = added.length - 1;
-// for (var i = 0; i < chooseBtn.length; i++) {
-//     console.log('infor');
-//     console.log(chooseBtn);
-//     chooseBtn[i].addEventListener('touchstart', function () {
-//         console.log('inevent');
-
-//         var added = document.querySelectorAll('.choose'),
-//             changeDiv = document.getElementById('changeDiv'),
-//             chosenBtn = changeDiv.querySelectorAll('button');
-
-//         var addedBtn = added[indexChooseIt].querySelectorAll('button');
-//         for (var j = 0; j < chosenBtn.length; j++) {
-//             if (chosenBtn[j].innerHTML == this.innerHTML) {
-//                 alert('你已选择该栏目');
-//                 return;
-//             } 
-//         }
-//         if (addedBtn.length == 4) {
-//             var changeDiv = document.getElementById('changeDiv');
-//             console.log(this);
-//             changeDiv.innerHTML += '<hr><div class="choose"><button>' + this.innerHTML + '</button></div>';
-//             indexChooseIt ++;
-//         } else {
-//             console.log('added');
-//             added[indexChooseIt].innerHTML += '<button>' + this.innerHTML + '</button>';
-//         }
-        
-//     });
-// }
-
-
-
-
 
 // 新闻同步
 var news = document.querySelectorAll('.news-div'),
@@ -343,13 +311,22 @@ ajax({
     url: "/news?num=4",
     method: "GET",
     success: function(res) {
-        // console.log(res);
         var data = JSON.parse(res);
-        // console.log(res);
         for (var i = 0; i < data.length; i++) {
             image[i].innerHTML = '<img src="' + data[i].imgURL + '">';
             contentA[i].href = data[i].link;
             focus.innerHTML = data[0].title;
+            // 字符过长解决方案
+            if (focus.innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 16) {
+                var str = focus.innerHTML;
+                var reg = /[\u0391-\uFFE5]/g;
+                var arr = str.match(reg).slice(0,16);
+                title = document.querySelectorAll('.title');
+                
+                focus.innerHTML = arr;
+                focus.innerHTML = focus.innerHTML.replace(/,/g, '') + '...';
+
+            }
             if (data[0].type == null) {
                 sort[0].style.display = 'none';
             } else {
@@ -360,10 +337,31 @@ ajax({
             if (data[i].type == null) {
                 sort[i + 1].style.display = 'none';
             }
-            
 
             title[i].innerHTML = data[i].title;
+
+            if (title[i].innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 12) {
+
+                var str = title[i].innerHTML;
+                var reg = /[\u0391-\uFFE5]/g;
+                var arr = str.match(reg).slice(0,12);
+                title = document.querySelectorAll('.title');
+                
+                title[i].innerHTML = arr;
+                title[i].innerHTML = title[i].innerHTML.replace(/,/g, '') + '...';
+            }
+
             decration[i].innerHTML = data[i].description;
+            if (decration[i].innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 30) {
+                var str = decration[i].innerHTML;
+                var reg = /[\u0391-\uFFE5]/g;
+                var arr = str.match(reg).slice(0,10);
+
+                decration = document.querySelectorAll('.decration');
+                
+                decration[i].innerHTML = arr;
+                decration[i].innerHTML = decration[i].innerHTML.replace(/,/g, '') + '...';
+            }
             number[i].innerHTML = data[i].post + '跟帖';
             sort[i + 1].innerHTML = data[i].type;
             sort[i + 1].style.backgroundColor = data[i].typeColor;
@@ -397,7 +395,6 @@ function fresh(e) {
                 sort = document.querySelectorAll('.sort'),
                 focus = document.querySelector('.bannerFocus');
 
-
             ajax({
                 url: "/news?num=4",
                 method: "GET",
@@ -409,6 +406,17 @@ function fresh(e) {
                         image[i].innerHTML = '<img src="' + data[i].imgURL + '">';
                         contentA[i].href = data[i].link;
                         focus.innerHTML = data[0].title;
+                        // 字符过长解决方案
+                        if (focus.innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 16) {
+                            var str = focus.innerHTML;
+                            var reg = /[\u0391-\uFFE5]/g;
+                            var arr = str.match(reg).slice(0,16);
+                            title = document.querySelectorAll('.title');
+                            
+                            focus.innerHTML = arr;
+                            focus.innerHTML = focus.innerHTML.replace(/,/g, '') + '...';
+
+                        }
                         if (data[0].type == null) {
                             sort[0].style.display = 'none';
                         } else {
@@ -419,10 +427,33 @@ function fresh(e) {
                         if (data[i].type == null) {
                             sort[i + 1].style.display = 'none';
                         }
-                        
 
                         title[i].innerHTML = data[i].title;
+
+                        if (title[i].innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 12) {
+
+                            var str = title[i].innerHTML;
+                            var reg = /[\u0391-\uFFE5]/g;
+                            var arr = str.match(reg).slice(0,12);
+                            console.log(arr);
+                            console.log('in');
+                            title = document.querySelectorAll('.title');
+                            
+                            title[i].innerHTML = arr;
+                            title[i].innerHTML = title[i].innerHTML.replace(/,/g, '') + '...';
+                        }
+
                         decration[i].innerHTML = data[i].description;
+                        if (decration[i].innerHTML.replace(/[\u0391-\uFFE5]/g,"a").length > 30) {
+                            var str = decration[i].innerHTML;
+                            var reg = /[\u0391-\uFFE5]/g;
+                            var arr = str.match(reg).slice(0,10);
+                            console.log(arr);
+                            decration = document.querySelectorAll('.decration');
+                            
+                            decration[i].innerHTML = arr;
+                            decration[i].innerHTML = decration[i].innerHTML.replace(/,/g, '') + '...';
+                        }
                         number[i].innerHTML = data[i].post + '跟帖';
                         sort[i + 1].innerHTML = data[i].type;
                         sort[i + 1].style.backgroundColor = data[i].typeColor;
@@ -437,3 +468,7 @@ function fresh(e) {
 function endFresh (e) {
     isMove = false;
 }
+
+
+
+
